@@ -1,20 +1,17 @@
 import mongoose from 'mongoose';
 
-// Describe required properties in new Ticket (TS)
 interface TicketAttrs {
   title: string;
   price: number;
-  userId: string;
 }
-// Describe properties a Ticket has (TS)
-interface TicketModel extends mongoose.Model<TicketDoc> {
-  build(attrs: TicketAttrs): TicketDoc;
-}
-// Describe properties of Ticket document
-interface TicketDoc extends mongoose.Document {
+
+export interface TicketDoc extends mongoose.Document {
   title: string;
   price: number;
-  userId: string;
+}
+
+interface TicketModel extends mongoose.Model<TicketDoc> {
+  build(attrs: TicketAttrs): TicketDoc;
 }
 
 const ticketSchema = new mongoose.Schema(
@@ -26,10 +23,7 @@ const ticketSchema = new mongoose.Schema(
     price: {
       type: Number,
       required: true,
-    },
-    userId: {
-      type: String,
-      required: true,
+      min: 0,
     },
   },
   {
