@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
-import { OrderStatus } from '@sgtickets/common';
+import { OrderStatus } from '@qroux-corp/common';
 import { TicketDoc } from './ticket';
+
+export { OrderStatus };
 
 interface OrderAttrs {
   userId: string;
