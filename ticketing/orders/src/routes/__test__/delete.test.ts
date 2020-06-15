@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import { app } from '../../app';
 import { Ticket } from '../../models/ticket';
 import { OrderStatus } from '@qroux-corp/common';
+import { natsWrapper } from '../../nats-wrapper';
 
 it('returns 400 if order not found', async () => {
   // create a ticket
@@ -88,4 +89,39 @@ it('returns 200 if order successfully updated to CANCELLED status', async () => 
   expect(updatedOrder.status).toEqual(OrderStatus.Cancelled);
 });
 
-it.todo('Publish an event to other services');
+it('Publish an event to other services', async () => {
+  // create a ticket
+  const ticket = Ticket.build({
+    title: 'test name',
+    price: 55,
+  });
+  await ticket.save();
+
+  // create a user
+  const user = global.signup();
+
+  // request a NEW_ORDER as user
+  const { body: newOrder } = await request(app)
+    .post('/api/orders')
+    .set('Cookie', user)
+    .send({ ticketId: ticket.id })
+    .expect(201);
+
+  expect(newOrder.status).toEqual(OrderStatus.Created);
+
+  // request a DELETE_ORDER as user
+  const { body: deletedOrder } = await request(app)
+    .delete(`/api/orders/${newOrder.id}`)
+    .set('Cookie', user)
+    .send()
+    .expect(204);
+
+  // request the updated order to check status
+  const { body: updatedOrder } = await request(app)
+    .get(`/api/orders/${newOrder.id}`)
+    .set('Cookie', user)
+    .send()
+    .expect(200);
+
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
+});
