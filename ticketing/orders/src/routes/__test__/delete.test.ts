@@ -8,6 +8,7 @@ import { natsWrapper } from '../../nats-wrapper';
 it('returns 400 if order not found', async () => {
   // create a ticket
   const ticket = Ticket.build({
+    id: mongoose.Types.ObjectId().toHexString(),
     title: 'test name',
     price: 55,
   });
@@ -27,6 +28,7 @@ it('returns 400 if order not found', async () => {
 it("returns 401 if user not order's owner", async () => {
   // create a ticket
   const ticket = Ticket.build({
+    id: mongoose.Types.ObjectId().toHexString(),
     title: 'test name',
     price: 55,
   });
@@ -55,6 +57,7 @@ it("returns 401 if user not order's owner", async () => {
 it('returns 200 if order successfully updated to CANCELLED status', async () => {
   // create a ticket
   const ticket = Ticket.build({
+    id: mongoose.Types.ObjectId().toHexString(),
     title: 'test name',
     price: 55,
   });
@@ -92,6 +95,7 @@ it('returns 200 if order successfully updated to CANCELLED status', async () => 
 it('Publish an event to other services', async () => {
   // create a ticket
   const ticket = Ticket.build({
+    id: mongoose.Types.ObjectId().toHexString(),
     title: 'test name',
     price: 55,
   });
