@@ -1,14 +1,14 @@
-import { Subjects, Listener, OrderCreatedEvent } from '@qroux-corp/common';
+import { Subjects, Listener, OrderCancelledEvent } from '@qroux-corp/common';
 import { Message } from 'node-nats-streaming';
 import { Ticket } from '../../models/ticket';
 import { queueGroupName } from './queue-group-name';
 import { TicketUpdatedPublisher } from '../publishers/ticket-updated-publisher';
 
-export class OrderCreatedListener extends Listener<OrderCreatedEvent> {
-  readonly subject = Subjects.OrderCreated;
+export class OrderCancelledListener extends Listener<OrderCancelledEvent> {
+  readonly subject = Subjects.OrderCancelled;
   queueGroupName = queueGroupName;
 
-  async onMessage(data: OrderCreatedEvent['data'], msg: Message) {
+  async onMessage(data: OrderCancelledEvent['data'], msg: Message) {
     // Find the ticket that the order is reserving
     const ticket = await Ticket.findById(data.ticket.id);
 
@@ -17,8 +17,8 @@ export class OrderCreatedListener extends Listener<OrderCreatedEvent> {
       throw new Error('Ticket not found');
     }
 
-    // Mark the ticket as Reserved by setting its orderId property
-    ticket.set({ orderId: data.id });
+    // Mark the ticket as Available by resetting its orderId property to undefined
+    ticket.set({ orderId: undefined });
 
     // save the ticket
     await ticket.save();
