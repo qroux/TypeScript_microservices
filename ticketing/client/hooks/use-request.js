@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 export default ({ url, method, body, onSuccess }) => {
   const [errors, setErrors] = useState(null);
+
   const doRequest = async () => {
     try {
       setErrors(null);
@@ -16,7 +17,7 @@ export default ({ url, method, body, onSuccess }) => {
     } catch (err) {
       setErrors(
         <div className="alert alert-danger">
-          <h5>Error Message</h5>
+          <h4>Ooops....</h4>
           <ul className="my-0">
             {err.response.data.errors.map((err) => (
               <li key={err.message}>{err.message}</li>
