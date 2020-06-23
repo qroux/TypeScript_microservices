@@ -1,23 +1,42 @@
 import useRequest from '../../hooks/use-request';
+import Router from 'next/router';
 
-const TicketShow = ({ ticket }) => {
+const TicketShow = ({ ticket, currentUser }) => {
   const { doRequest, errors } = useRequest({
     url: '/api/orders',
     method: 'post',
     body: {
       ticketId: ticket.id,
     },
-    onSuccess: (order) => console.log(order),
+    onSuccess: (order) =>
+      Router.push('/orders/[orderId]', `/orders/${order.id}`),
   });
+
+  const purchaseBtn = () => {
+    if (currentUser) {
+      return (
+        <button onClick={() => doRequest()} className="btn btn-primary">
+          Purchase
+        </button>
+      );
+    }
+
+    return (
+      <button
+        onClick={() => Router.push('/auth/signin')}
+        className="btn btn-primary"
+      >
+        Pruchase
+      </button>
+    );
+  };
 
   return (
     <div>
       <h1>{ticket.title}</h1>
       <h4>Price: {ticket.price}</h4>
       {errors}
-      <button onClick={doRequest} className="btn btn-primary">
-        Purchase
-      </button>
+      {purchaseBtn()}
     </div>
   );
 };
